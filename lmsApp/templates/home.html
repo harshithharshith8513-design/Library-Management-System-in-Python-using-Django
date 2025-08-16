@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load static %}
+{% block pageContent %}
+
+<style>
+/* ===== Card Styles ===== */
+.card {
+    border-radius: 12px;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 20px rgba(0,0,0,0.2);
+}
+
+/* ===== Icon Wrapper ===== */
+.icon-wrapper {
+    background: rgba(255, 255, 255, 0.25);
+    padding: 15px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ===== Gradient Background Colors for Cards ===== */
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #4e73df, #224abe);
+}
+.bg-gradient-success {
+    background: linear-gradient(135deg, #1cc88a, #0f7e5f);
+}
+.bg-gradient-warning {
+    background: linear-gradient(135deg, #f6c23e, #dda20a);
+}
+.bg-gradient-dark {
+    background: linear-gradient(135deg, #5a5c69, #2e2f37);
+}
+.bg-gradient-secondary {
+    background: linear-gradient(135deg, #858796, #3a3b45);
+}
+
+.count {
+    font-weight: bold;
+}
+
+/* ===== Logo Container Styling ===== */
+.header-logo-container {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+}
+
+.header-logo-container img {
+    height: 50px;
+    width: auto;
+    margin-right: 15px;
+}
+
+.header-logo-container h2 {
+    margin: 0;
+    font-weight: bolder;
+    font-size: 1.75rem;
+}
+</style>
+
+<!-- Logo and title on top near navbar -->
+<div class="header-logo-container">
+    <img src="{% static 'assets/default/img/Discover-College-Official-Logo.webp' %}" alt="Logo">
+    <h2>Library Management System</h2>
+</div>
+
+<section class="py-3">
+    <h2 class="fw-bolder">Welcome, {{ request.user.first_name }} {{ request.user.last_name }}!</h2>
+    <hr>
+    <div class="row justify-content-center g-4">
+
+        <!-- Active Categories -->
+        <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="card shadow text-light bg-gradient-primary">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-3">
+                            <span class="icon-wrapper">
+                                <i class="fa fa-th-list fs-1"></i>
+                            </span>
+                        </div>
+                        <div class="col-9 text-end">
+                            <h1 class="count" data-target="{{ categories }}">{{ categories|intcomma }}</h1>
+                            <strong>Active Categories</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Sub Categories -->
+        <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="card shadow text-light bg-gradient-dark">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-3">
+                            <span class="icon-wrapper">
+                                <i class="fa fa-list fs-1"></i>
+                            </span>
+                        </div>
+                        <div class="col-9 text-end">
+                            <h1 class="count" data-target="{{ sub_categories }}">{{ sub_categories|intcomma }}</h1>
+                            <strong>Active Sub Categories</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Students -->
+        <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="card shadow text-light bg-gradient-success">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-3">
+                            <span class="icon-wrapper">
+                                <i class="fa fa-user-friends fs-1"></i>
+                            </span>
+                        </div>
+                        <div class="col-9 text-end">
+                            <h1 class="count" data-target="{{ students }}">{{ students|intcomma }}</h1>
+                            <strong>Active Students</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Books -->
+        <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="card shadow text-light bg-gradient-warning">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-3">
+                            <span class="icon-wrapper">
+                                <i class="fa fa-book fs-1"></i>
+                            </span>
+                        </div>
+                        <div class="col-9 text-end">
+                            <h1 class="count" data-target="{{ books }}">{{ books|intcomma }}</h1>
+                            <strong>Active Books</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Transactions -->
+        <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="card shadow text-light bg-gradient-secondary">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-3">
+                            <span class="icon-wrapper">
+                                <i class="fa fa-book-open fs-1"></i>
+                            </span>
+                        </div>
+                        <div class="col-9 text-end">
+                            <h1 class="count" data-target="{{ pending }}">{{ pending|intcomma }}</h1>
+                            <strong>Pending Transactions</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Transactions -->
+        <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="card shadow text-light bg-gradient-dark">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-3">
+                            <span class="icon-wrapper">
+                                <i class="fa fa-book-open fs-1"></i>
+                            </span>
+                        </div>
+                        <div class="col-9 text-end">
+                            <h1 class="count" data-target="{{ transactions }}">{{ transactions|intcomma }}</h1>
+                            <strong>Total Transactions</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+{% endblock pageContent %}
+
+{% block ScriptBlock %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".count").forEach(counter => {
+        let target = +counter.getAttribute("data-target");
+        let count = 0;
+        const speed = 20;
+        const updateCount = () => {
+            if (count < target) {
+                count += Math.ceil(target / 40);
+                counter.innerText = count.toLocaleString();
+                setTimeout(updateCount, speed);
+            } else {
+                counter.innerText = target.toLocaleString();
+            }
+        }
+        updateCount();
+    });
+});
+</script>
+{% endblock ScriptBlock %}

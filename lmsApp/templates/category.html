@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block pageContent %}
+<style>
+    .header-logo {
+        height: 50px;
+        width: auto;
+        object-fit: contain;
+        margin-right: 15px;
+    }
+    .header-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        border-bottom: 2px solid #007bff;
+        padding-bottom: 0.5rem;
+    }
+    .header-title {
+        font-weight: 700;
+        font-size: 1.75rem;
+        color: #007bff;
+    }
+
+    .card {
+        border-radius: 12px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+        border: none;
+    }
+    .card:hover {
+        box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 0.5rem;
+    }
+    thead th {
+        background-color: #007bff;
+        color: white;
+        font-weight: 600;
+        border: none !important;
+    }
+    tbody tr {
+        background: #f9f9f9;
+        cursor: default;
+        opacity: 0;
+        animation: fadeInUp 0.4s ease forwards;
+    }
+    tbody tr:hover {
+        background: #e2e6f0;
+    }
+    .action-bar {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: center;
+        margin-bottom: 0.2rem;
+    }
+    .action-bar .btn,
+    .action-bar .btn:active,
+    .action-bar .btn:focus {
+        padding: 0.18em 0.7em;
+        font-size: 0.93rem;
+        border-radius: 16px;
+        line-height: 1;
+    }
+    .badge-active {
+        background: #198754;
+        color: white;
+        padding: 0.25em 0.75em;
+        border-radius: 12px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+    .badge-inactive {
+        background: #6c757d;
+        color: white;
+        padding: 0.25em 0.75em;
+        border-radius: 12px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: none; }
+    }
+</style>
+
+<section class="py-4">
+<div class="container">
+
+    <!-- Logo and Title -->
+    <div class="header-container">
+        <img src="{% static 'assets/default/img/Discover-College-Official-Logo.webp' %}" alt="Logo" class="header-logo">
+        <h3 class="header-title">List of Categories</h3>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="container-fluid">
+                <div class="text-end mb-3">
+                    <button class="btn btn-primary rounded-0" type="button" id="create_new">
+                        <i class="fa fa-plus"></i> Add New
+                    </button>
+                </div>
+                <table class="table table-bordered table-striped" id="category-tbl">
+                    <thead>
+                        <tr>
+                            <th class="text-center">#</th>
+                            <th class="text-center">DateTime</th>
+                            <th class="text-center">Name</th>
+                            <th class="text-center">Description</th>
+                            <th class="text-center">Status & Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cat in category %}
+                        <tr>
+                            <td class="text-center">{{ forloop.counter }}</td>
+                            <td>{{ cat.date_created|date:"Y-m-d H:i" }}</td>
+                            <td>{{ cat.name }}</td>
+                            <td>{{ cat.description|safe }}</td>
+                            <td class="text-center">
+                                <div class="action-bar">
+                                    <button class="btn btn-outline-primary btn-sm view-data" data-url="{% url 'view-category-pk' cat.pk %}" title="View">
+                                        <i class="fa fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-outline-success btn-sm edit-data" data-url="{% url 'manage-category-pk' cat.pk %}" title="Edit">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-outline-danger btn-sm delete-data" data-url="{% url 'delete-category' cat.pk %}" title="Delete">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </div>
+                                {% if cat.status == '1' %}
+                                  <span class="badge-active">Active</span>
+                                {% else %}
+                                  <span class="badge-inactive">Inactive</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+</section>
+{% endblock %}
+
+{% block ScriptBlock %}
+<script>
+$(function() {
+    $('#create_new').click(function() {
+        uni_modal("<i class='fa fa-plus'></i> Add New Category", "{% url 'manage-category' %}")
+    });
+    $('.view-data').click(function() {
+        uni_modal("<i class='fa fa-th-list'></i> Category Details", $(this).attr('data-url'))
+    });
+    $('.edit-data').click(function() {
+        uni_modal("<i class='fa fa-edit'></i> Edit Category Details", $(this).attr('data-url'))
+    });
+    $('.delete-data').click(function() {
+        _conf("Are you sure to delete this Category?", 'delete_category', ["'" + $(this).attr('data-url') + "'"])
+    });
+
+    $('#category-tbl').DataTable({
+        columnDefs: [{ orderable: false, targets: [4] }],
+        lengthMenu: [[25, 50, 100, -1], [25, 50, 100, "All"]]
+    });
+});
+
+function delete_category(url) {
+    var _this = $('#confirm_modal .modal-body');
+    $('.err-msg').remove();
+    var el = $('<div>').addClass("alert alert-danger err-msg").hide();
+    start_loader();
+    $.ajax({
+        headers: { "X-CSRFToken": "{{csrf_token}}" },
+        url: url,
+        dataType: 'JSON',
+        error: err => {
+            console.log(err);
+            alert("An error occurred.");
+            end_loader();
+        },
+        success: function(resp) {
+            if (resp.status == 'success') {
+                location.reload();
+            } else if (!!resp.msg) {
+                el.html(resp.msg);
+                _this.prepend(el);
+                el.show();
+            } else {
+                el.html("An error occurred");
+                _this.prepend(el);
+                el.show();
+            }
+            end_loader();
+        }
+    });
+}
+</script>
+{% endblock ScriptBlock %}

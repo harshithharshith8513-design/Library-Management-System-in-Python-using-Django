@@ -1,0 +1,10 @@
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
+//if nessary
+pip install <library_name>
+//vitrual enu
+python -m venv env
+env\Scripts\activate
+//for deactivition
+.\env\Scripts\deactivate
