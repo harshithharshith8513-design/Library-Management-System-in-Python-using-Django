@@ -1,5 +1,6 @@
 # Library-Management-System-in-Python-using-Django
 The Library Management System in Django is a web app to manage books, members, and issue–return records, making library tasks simple and automated.
+
 📚 Library Management System (Django)
 A simple Library Management System built with Python (Django) that allows managing books, members, and book issue-return records efficiently.
 
@@ -7,19 +8,14 @@ A simple Library Management System built with Python (Django) that allows managi
 Prerequisites
 Make sure you have the following installed:
 
-Python (Recommended: v3.9.1)
-
+Python 3.12.10
 PIP (for installing required packages)
 
 ⚙️ Setup & Installation
-Download & Extract the source code zip file.
-
+clone the repository
 Open your Terminal/Command Prompt.
-
 Ensure Python and PIP are added to your environment variables.
-
 Navigate to the project directory:
-
 bash
 cd C:\Users\Personal-23\Desktop\django_lms
 Run the following commands:
